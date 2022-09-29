@@ -49,14 +49,14 @@ def getFrequency(dataset):
 def getRelativeFrequency(total_occurence, frequency):
     RM = []
     for i, freq in enumerate(frequency):
-        df["RELATIVE FREQUENCY"][i] = round(freq / total_occurence, 2)
+        df["RELATIVE FREQUENCY"][i] = round(freq / total_occurence, 10)
         RM.append(df["RELATIVE FREQUENCY"][i])
     return RM
 
 
 def getPercentage(RM):
     for i, percentage in enumerate(RM):
-        df["PERCENTAGE"][i] = f"{round(percentage * 100, 0)} %" 
+        df["PERCENTAGE"][i] = f"{round(percentage * 100, 9)} %" 
 
 
 def getCummulativeFrequency(frequency):
