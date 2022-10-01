@@ -4,6 +4,7 @@ import math
 from os import getcwd
 import heapq
 
+DECIMAL_PLACES = 3
 
 df = pd.read_excel('Data.xlsx', sheet_name='Sheet1')
 
@@ -43,20 +44,23 @@ def getFrequency(dataset):
             i += 1
     total.append(frequency_count)
     df["FREQUENCY"][i] = frequency_count
+    df["FREQUENCY"][i+1] = sum(total)
     return total
 
 
 def getRelativeFrequency(total_occurence, frequency):
     RM = []
     for i, freq in enumerate(frequency):
-        df["RELATIVE FREQUENCY"][i] = round(freq / total_occurence, 10)
+        df["RELATIVE FREQUENCY"][i] = round(freq / total_occurence, DECIMAL_PLACES)
         RM.append(df["RELATIVE FREQUENCY"][i])
+    df["RELATIVE FREQUENCY"][i+1] = sum(RM) # Add Total at last of row.
     return RM
 
 
 def getPercentage(RM):
     for i, percentage in enumerate(RM):
-        df["PERCENTAGE"][i] = f"{round(percentage * 100, 9)} %" 
+        df["PERCENTAGE"][i] = f"{round(percentage * 100, DECIMAL_PLACES)} %" 
+    df["PERCENTAGE"][i+1] = f"{round(sum(RM), DECIMAL_PLACES)} %" # Add Total at last of row.
 
 
 def getCummulativeFrequency(frequency):
@@ -68,6 +72,7 @@ def getCummulativeFrequency(frequency):
     i = 0
     for i in range(0, len(frequency)):
         df[">CM"][i+1] = df[">CM"][i] - frequency[i]
+    df[">CM"][i+1] = "" # Delete Useless Last Row
         
 
 def getMidpoint(frequency):
@@ -75,6 +80,7 @@ def getMidpoint(frequency):
     for i in range(0, len(frequency)):
         df["MIDPOINTS"][i] = (df["LOWER LIMIT"][i] + df["UPPER LIMIT"][i]) / 2
         midpoints.append((df["LOWER LIMIT"][i] + df["UPPER LIMIT"][i]) / 2)
+    df["MIDPOINTS"][i+1] = sum(midpoints) # Add Total at last of row.
     return midpoints
 
 
@@ -83,6 +89,7 @@ def getFx(frequency, midpoint):
     for i, (fx, freq) in enumerate(zip(midpoint, frequency)):
         df["FX"][i] = fx * freq
         total.append(fx * freq)
+    df["FX"][i+1] = sum(total) # Add Total at last of row.
     return total
 
 
@@ -96,6 +103,7 @@ def getFxBar(frequency, midpoint, x_bar):
     for i in range(0, len(frequency)):
         df["FXBAR"][i] = round(frequency[i] * np.power((midpoint[i] - x_bar), 2), 2)
         total_variance += df["FXBAR"][i]
+    df["FXBAR"][i+1] = total_variance # Add Total at last of row.
     return total_variance
 
 
@@ -204,8 +212,8 @@ if __name__ == "__main__":
     q1 = getQuartile(getFrequency, 1, size, interval)
     q2 = getQuartile(getFrequency, 2, size, interval)
     q3 = getQuartile(getFrequency, 3, size, interval)
-    getDecile(getFrequency, 8, size, interval)
-    getPercentile(getFrequency, 71, size, interval)
+    getDecile(getFrequency, 3, size, interval)
+    getPercentile(getFrequency, 96, size, interval)
     getMidHinge(q1, q3)
     getInterQuartile(q1, q3)
     getQuartileDeviation(q1, q3)
